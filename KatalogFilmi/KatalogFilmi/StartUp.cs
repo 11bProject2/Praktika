@@ -1,12 +1,15 @@
-﻿using System;
+﻿using Data;
+using System;
 
 namespace KatalogFilmi
 {
-    class StartUp
+    public class StartUp
     {
         static void Main(string[] args)
         {
-
+            MovieContext db = new MovieContext();
+            db.Database.EnsureDeleted();
+            db.Database.EnsureCreated();
             
         }
     }
