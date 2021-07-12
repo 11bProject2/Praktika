@@ -12,8 +12,8 @@ namespace Data
     {
         public DbSet<Movie> Movies { get; set; }
         public DbSet<Ganre> Ganres { get; set; }
-        public DbSet<MovieActor> MovieActors { get; set; }
-        public DbSet<MovieAuthor> MovieAuthors { get; set; }
+        public DbSet<MovieActor> MoviesActors { get; set; }
+        public DbSet<MovieAuthor> MoviesAuthors { get; set; }
         public DbSet<Person> Persons { get; set; }
 
         public MovieContext()
@@ -29,7 +29,5 @@ namespace Data
             modelBuilder.Entity<MovieActor>().HasKey(x => new { x.MovieId, x.ActorId });
             modelBuilder.Entity<MovieAuthor>().HasKey(x => new { x.MovieId, x.AuthorId });
         }
-
-
     }
 }
