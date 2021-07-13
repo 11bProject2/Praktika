@@ -10,6 +10,8 @@ namespace KatalogFilmi
             MovieContext db = new MovieContext();
             db.Database.EnsureDeleted();
             db.Database.EnsureCreated();
+
+            Display display = new Display();
         }
     }
 }

@@ -10,161 +10,147 @@ namespace Business
 {
     public class MovieBusiness
     {
+
         private MovieContext movieContext;
-        /*public string GetAll()
-        {
-            using (movieContext = new MovieContext())
-            {
-                var movies = movieContext.Movies
-                    .Select(p => new
-                    {
-                        p.Name,
-                        p.Price,
-                        category = p.Category.Name,
-                    }).ToList();
-                var sb = new StringBuilder();
-                foreach (var item in movies)
-                {
-                    sb.AppendLine($"{ item.Name} { item.Price}  {item.category }");
-                }
-                return sb.ToString().Trim();
-            }
-        }
-        public Movie GetMovie(int id)
-        {
-            using (movieContext = new MovieContext())
-            { return movieContext.Movies.Find(id); }
-        }
-
-        public Category GetCategory(int id)
-        {
-            using (movieContext = new MovieContext())
-            { return movieContext.Categories.Find(id); }
-        }
-        public void AddMovie(Product product, Category category)
-        {
-            using (movieContext = new MovieContext())
-            {
-
-                var categorySearch = movieContext.Categories.FirstOrDefault(c => c.Name == category.Name);
-                if (categorySearch == null)
-                {
-                    movieContext.Categories.Add(category); //добавяме категорията
-                    movieContext.SaveChanges();
-                    product.CategoryId = category.Id;
-                    movieContext.Movies.Add(product);//добавяме продукта
-                    movieContext.SaveChanges();
-                }
-                else
-                {
-                    product.CategoryId = categorySearch.Id; //записваме id на категорията в продукта
-                    movieContext.Movies.Add(product);//добавяме продукта
-                    movieContext.SaveChanges();
-                }
-            }
-        }
-
-        public void UpdateProduct(Product product, Category category)
-        {
-            using (movieContext = new MovieContext())
-            {
-                var item = movieContext.Products.Find(product.Id);
-                var categorySearched = movieContext.Categories.FirstOrDefault(c => c.Name == category.Name);
-                if (item != null)
-                {
-                    var categorySearch = movieContext.Categories.FirstOrDefault(c => c.Name == category.Name);
-                    if (categorySearch == null)
-                    {
-                        movieContext.Categories.Add(category); //добавяме категорията
-                        movieContext.SaveChanges();
-                        product.CategoryId = category.Id;
-                    }
-                    else
-                    {
-                        product.CategoryId = categorySearch.Id; //записваме id на категорията в продукта
-
-                    }
-                    movieContext.Entry(item).CurrentValues.SetValues(product);
-                    movieContext.SaveChanges();
-                }
-            }
-        }
-
-        public void UpdateStock(int storeId, int productId, int count)
-        {
-            using (movieContext = new MovieContext())
-            {
-                var store = productContext.Stores.Find(storeId);
-                var product = productContext.Products.Find(productId);
-                if (store != null && product != null)
-                {
-                    var searchedItem = productContext.ProductsStores.FirstOrDefault(x => x.ProductId == productId && x.StoreId == storeId);
-                    if (searchedItem == null)
-                    {
-                        ProductStore item = new ProductStore();
-                        item.ProductId = productId;
-                        item.StoreId = storeId;
-                        item.Stock = count;
-                        productContext.ProductsStores.Add(item);
-                        movieContext.SaveChanges();
-                    }
-                    else
-                    {
-                        searchedItem.Stock = count;
-                        movieContext.SaveChanges();
-                    }
-
-                }
-                else
-                {
-                    Console.WriteLine("Error");
-                }
-            }
-        }
-
-        public void Delete(int id)
-        {
-            using (movieContext = new MovieContext())
-            {
-                var product = movieContext.Movies.Find(id);
-                if (product != null)
-                {
-                    movieContext.Movies.Remove(product);
-                    movieContext.SaveChanges();
-                }
-            }
-        }*/
 
         public void AddGanre(Ganre ganre)
         {
             using (movieContext = new MovieContext())
             {
-                movieContext.Ganres.Add(ganre);
-                movieContext.SaveChanges();
+                if (ganre != null)
+                {
+                    movieContext.Ganres.Add(ganre);
+                    movieContext.SaveChanges();
+                }
             }
         }
-
-        public void AddFilm(Movie movie, Ganre ganre)
+        public void AddMovieAndAuthors(Movie movie,Ganre ganre, List<Person> authors)
         {
             using (movieContext = new MovieContext())
             {
-
-                var categorySearch = movieContext.Ganres.FirstOrDefault(c => c.Name == ganre.Name);
-                if (categorySearch == null)
+                var ganreSearch = movieContext.Ganres.FirstOrDefault(c => c.Name == ganre.Name);
+                if (ganreSearch == null)
                 {
                     movieContext.Ganres.Add(ganre); //добавяме категорията
                     movieContext.SaveChanges();
-                    movie.Id = ganre.Id;
-                    movieContext.Movies.Add(movie);//добавяме продукта
-                    movieContext.SaveChanges();
+                    movie.GanreId = ganre.Id;
                 }
                 else
                 {
-                    movie.Id = categorySearch.Id; //записваме id на категорията в продукта
-                    movieContext.Movies.Add(movie);//добавяме продукта
+                    movie.GanreId = ganre.Id; //записваме id на категорията в продукта
+                }
+                movieContext.Movies.Add(movie);
+                movieContext.SaveChanges();
+                MovieAuthor movieAuthor = new MovieAuthor();
+                foreach (var author in authors)
+                {
+                    var itemAuthor = movieContext.Persons.FirstOrDefault(x => x.FirstName == author.FirstName && x.LastName == author.LastName);
+                    if (itemAuthor == null)
+                    {
+                        movieContext.Persons.Add(author);
+                        movieContext.SaveChanges();
+                        itemAuthor = movieContext.Persons.OrderBy(a => a.Id).Last();
+
+                    }
+                    movieAuthor.AuthorId = itemAuthor.Id;
+                    movieAuthor.MovieId = movie.Id;
+
+                    movieContext.MoviesAuthors.Add(movieAuthor);
+                    movieContext.SaveChanges();
+                }
+                
+
+
+            }
+        }
+
+        public void AddPerson(Person person)
+        {
+            using (movieContext = new MovieContext())
+            {
+                if (person != null)
+                {
+                    movieContext.Persons.Add(person);
                     movieContext.SaveChanges();
                 }
             }
         }
+        public void AddActor(MovieActor movieActor, MovieAuthor movieAuthor)
+        {
+            using (movieContext = new MovieContext())
+            {
+                if (movieActor != null && movieAuthor != null)
+                {
+                    movieContext.MoviesActors.Add(movieActor);
+                    movieContext.MoviesAuthors.Add(movieAuthor);
+                    movieContext.SaveChanges();
+                }
+            }
+        }
+        public void EditMovie(int id, string title, int year, int ganreid)
+        {
+            using (movieContext = new MovieContext())
+            {
+                var movie = movieContext.Movies.Find(id);
+
+                if (movie != null)
+                {
+                    var searchedItem = movieContext.Movies.FirstOrDefault(x => x.Id == id);
+                    Movie movie1 = new Movie();
+
+                    if (searchedItem == null)
+                    {
+                        movie1.Title = title;
+                        movie1.Year = year;
+                        movie1.GanreId = ganreid;
+                        movie1.Ganre = movieContext.Ganres.Find(ganreid);
+
+                        movieContext.Movies.Add(movie1);
+                        movieContext.SaveChanges();
+                    }
+                    else
+                    {
+                        movie1.Title = title;
+                        movie1.Year = year;
+                        movie1.GanreId = ganreid;
+                        movie1.Ganre = movieContext.Ganres.Find(ganreid);
+
+                        movieContext.SaveChanges();
+                    }
+                }
+                else
+                {
+                    Console.WriteLine("Eror 404: Movie not found!");
+                }
+            }
+        }
+
+        public void DeletedMovie(int id)
+        {
+            using (movieContext = new MovieContext())
+            {
+                var deletedMovie = movieContext.Movies.Find(id);
+
+                if (deletedMovie != null)
+                {
+                    movieContext.Movies.Remove(deletedMovie);
+                    movieContext.SaveChanges();
+                }
+            }
+        }
+        public string GetMovies()
+        {
+            using (movieContext = new MovieContext())
+            {
+                var movie = movieContext.Movies.Select(x => new { x.Id, x.Title, x.Year, x.GanreId }).ToList();
+                StringBuilder stringBuilder = new StringBuilder();
+                foreach (var item in movie)
+                {
+                    stringBuilder.AppendLine($"{item.Id} {item.Title} {item.Year} {item.GanreId}");
+                }
+                return stringBuilder.ToString();
+            }
+        }
+
     }
 }

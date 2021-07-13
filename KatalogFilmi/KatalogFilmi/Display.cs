@@ -9,26 +9,26 @@ namespace KatalogFilmi
 {
     public class Display
     {
-        private int closeOperationId = 8;
+        private int closeOperationId = 7;
         private MovieBusiness movieBusiness = new MovieBusiness();
+
         public Display()
         {
             Input();
         }
+
         private void ShowMenu()
         {
             Console.WriteLine(new string('-', 40));
             Console.WriteLine(new string('-', 18) + "MENU" + new string('-', 18));
             Console.WriteLine(new string('-', 40));
-            Console.WriteLine("1.Add ganre");
-            //Console.WriteLine("2. Add new film");
-            //Console.WriteLine("3. Add person");
-            //Console.WriteLine("4. Fetch product  by ID");
-            //Console.WriteLine("5. Delete product  by ID");
-            //Console.WriteLine("6. Add new store");
-            //Console.WriteLine("7. Update stock by storeId and productId");
-            //Console.WriteLine("8. Exit");
-
+            Console.WriteLine("1. Add Ganre");
+            Console.WriteLine("2. Add Movie");
+            Console.WriteLine("3. Add Person");
+            Console.WriteLine("4. Edit Movie");
+            Console.WriteLine("5. Remove Movie");
+            Console.WriteLine("5. Get Movies");
+            Console.WriteLine("7. Exit");
         }
 
         private void Input()
@@ -41,12 +41,7 @@ namespace KatalogFilmi
                 switch (operation)
                 {
                     case 1: AddGanre(); break;
-                    case 2: AddFilm(); break;
-                    case 3: AddAuthor(); break;
-                    /*case 4: Fetch(); break;
-                    case 5: Delete(); break;
-                    case 6: AddStore(); break;
-                    case 7: UpdateStock(); break;*/
+                    case 2: AddMovieAndAuthors(); break;
 
                     default:
                         break;
@@ -64,26 +59,42 @@ namespace KatalogFilmi
             movieBusiness.AddGanre(ganre);
         }
 
-        private void AddFilm()
+        private void AddMovieAndAuthors()
         {
             Movie movie = new Movie();
-            Console.WriteLine("Enter name: ");
+
+            Console.WriteLine("Enter Title: ");
             movie.Title = Console.ReadLine();
+            Console.WriteLine("Enter Year: ");
+            movie.Year = int.Parse(Console.ReadLine());
+
             Ganre ganre = new Ganre(); ;
-            Console.WriteLine("Enter name: ");
+            Console.WriteLine("Enter ganre: ");
             ganre.Name = Console.ReadLine();
 
-            movieBusiness.AddFilm(movie, ganre);
-        }
+            var authors = new List<Person>();
 
-        private void AddAuthor()
-        {
-            MovieAuthor movieAuthor = new MovieAuthor(); ;
-            Console.WriteLine("Enter name: ");
-            movieAuthor.Author = Console.ReadLine();
+            string ans = "Y";
+            while (ans == "y" || ans == "Y")
+            {
+                Person author = new Person();
+                Console.WriteLine("Enter author's First Name: ");
+                author.FirstName = Console.ReadLine();
+                Console.WriteLine("Enter author's Last Name: ");
+                author.LastName = Console.ReadLine();
+                authors.Add(author);
+                Console.WriteLine("Another author (y/n):");
+                ans = Console.ReadLine();
+            }
+            foreach (var item in authors)
+            {
+                Console.WriteLine($"{item.FirstName} {item.LastName}");
+            }
+            movieBusiness.AddMovieAndAuthors(movie, ganre, authors);
 
-            movieBusiness.AddAuthor(movieAuthor);
+
         }
 
     }
+
 }
