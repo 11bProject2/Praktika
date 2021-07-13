@@ -59,6 +59,7 @@ namespace Business
                     movieContext.MoviesAuthors.Add(movieAuthor);
                     movieContext.SaveChanges();
                 }
+
                 foreach (var actor in actors)
                 {
                     var itemActor = movieContext.Persons.FirstOrDefault(x => x.FirstName == actor.FirstName && x.LastName == actor.LastName);
@@ -80,7 +81,6 @@ namespace Business
 
             }
         }
-
         public void AddPerson(Person person)
         {
             using (movieContext = new MovieContext())
@@ -104,40 +104,40 @@ namespace Business
                 }
             }
         }
-        public void EditMovie(int id, string title, int year, int ganreid)
+        public void EditMovie(Movie movie)
         {
             using (movieContext = new MovieContext())
             {
-                var movie = movieContext.Movies.Find(id);
+                var searchedMovie = movieContext.Movies.Find(movie.Id);
 
                 if (movie != null)
                 {
-                    var searchedItem = movieContext.Movies.FirstOrDefault(x => x.Id == id);
+                    var searchedItem = movieContext.Movies.FirstOrDefault(x => x.Id == movie.Id);
                     Movie movie1 = new Movie();
 
                     if (searchedItem == null)
                     {
-                        movie1.Title = title;
-                        movie1.Year = year;
-                        movie1.GanreId = ganreid;
-                        movie1.Ganre = movieContext.Ganres.Find(ganreid);
+                        movie1.Title = movie.Title;
+                        movie1.Year = movie.Year;
+                        movie1.GanreId = movie.GanreId;
+                        movie1.Ganre = movieContext.Ganres.Find(movie.GanreId);
 
                         movieContext.Movies.Add(movie1);
                         movieContext.SaveChanges();
                     }
                     else
                     {
-                        movie1.Title = title;
-                        movie1.Year = year;
-                        movie1.GanreId = ganreid;
-                        movie1.Ganre = movieContext.Ganres.Find(ganreid);
+                        movie1.Title = movie.Title;
+                        movie1.Year = movie.Year;
+                        movie1.GanreId = movie.GanreId;
+                        movie1.Ganre = movieContext.Ganres.Find(movie.GanreId);
 
                         movieContext.SaveChanges();
                     }
                 }
                 else
                 {
-                    Console.WriteLine("Eror 404: Movie not found!");
+                    Console.WriteLine("Error 404: Movie not found!");
                 }
             }
         }
@@ -168,6 +168,48 @@ namespace Business
                 return stringBuilder.ToString();
             }
         }
+        public string GetAllMovieAndAuthors()
+        {
+            using (movieContext = new MovieContext())
+            {
+                var movies = movieContext.Movies
+                    .Select(m => new
+                    {
+                        m.Title,
+                        m.Year,
+
+                    }).ToList();
+                var sb = new StringBuilder();
+                foreach (var movie in movies)
+                {
+                    sb.AppendLine($"{movie.Title} {movie.Year}");
+                }
+
+                return sb.ToString().TrimEnd();
+            }
+        }
+
+        public string GetAllMovieAndActors()
+        {
+            using (movieContext = new MovieContext())
+            {
+                var movies = movieContext.Movies
+                    .Select(m => new
+                    {
+                        m.Title,
+                        m.Year,
+
+                    }).ToList();
+                var sb = new StringBuilder();
+                foreach (var movie in movies)
+                {
+                    sb.AppendLine($"{movie.Title} {movie.Year}");
+                }
+
+                return sb.ToString().TrimEnd();
+            }
+        }
+
 
     }
 }
