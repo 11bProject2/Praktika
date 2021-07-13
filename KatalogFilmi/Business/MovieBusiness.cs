@@ -24,7 +24,7 @@ namespace Business
                 }
             }
         }
-        public void AddMovieAndAuthors(Movie movie,Ganre ganre, List<Person> authors)
+        public void AddMovieAndAuthors(Movie movie,Ganre ganre, List<Person> authors,List<Person> actors)
         {
             using (movieContext = new MovieContext())
             {
@@ -42,6 +42,7 @@ namespace Business
                 movieContext.Movies.Add(movie);
                 movieContext.SaveChanges();
                 MovieAuthor movieAuthor = new MovieAuthor();
+                MovieActor movieActor = new MovieActor();
                 foreach (var author in authors)
                 {
                     var itemAuthor = movieContext.Persons.FirstOrDefault(x => x.FirstName == author.FirstName && x.LastName == author.LastName);
@@ -56,6 +57,22 @@ namespace Business
                     movieAuthor.MovieId = movie.Id;
 
                     movieContext.MoviesAuthors.Add(movieAuthor);
+                    movieContext.SaveChanges();
+                }
+                foreach (var actor in actors)
+                {
+                    var itemActor = movieContext.Persons.FirstOrDefault(x => x.FirstName == actor.FirstName && x.LastName == actor.LastName);
+                    if (itemActor == null)
+                    {
+                        movieContext.Persons.Add(actor);
+                        movieContext.SaveChanges();
+                        itemActor = movieContext.Persons.OrderBy(a => a.Id).Last();
+
+                    }
+                    movieActor.ActorId = itemActor.Id;
+                    movieActor.MovieId = movie.Id;
+
+                    movieContext.MoviesActors.Add(movieActor);
                     movieContext.SaveChanges();
                 }
                 

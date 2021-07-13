@@ -86,11 +86,22 @@ namespace KatalogFilmi
                 Console.WriteLine("Another author (y/n):");
                 ans = Console.ReadLine();
             }
-            foreach (var item in authors)
+            var actors = new List<Person>();
+
+             ans = "Y";
+            while (ans == "y" || ans == "Y")
             {
-                Console.WriteLine($"{item.FirstName} {item.LastName}");
+                Person actor = new Person();
+                Console.WriteLine("Enter actors's First Name: ");
+                actor.FirstName = Console.ReadLine();
+                Console.WriteLine("Enter actor's Last Name: ");
+                actor.LastName = Console.ReadLine();
+                actors.Add(actor);
+                Console.WriteLine("Another actor (y/n):");
+                ans = Console.ReadLine();
             }
-            movieBusiness.AddMovieAndAuthors(movie, ganre, authors);
+            
+            movieBusiness.AddMovieAndAuthors(movie, ganre, authors,actors);
 
 
         }
