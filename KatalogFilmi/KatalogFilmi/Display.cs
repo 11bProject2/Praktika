@@ -1,4 +1,5 @@
 ﻿using Business;
+using Data;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -42,6 +43,8 @@ namespace KatalogFilmi
                 {
                     case 1: AddGanre(); break;
                     case 2: AddMovieAndAuthors(); break;
+                    case 3:
+                    case 4: EditMovie();break;
 
                     default:
                         break;
@@ -102,8 +105,19 @@ namespace KatalogFilmi
             }
             
             movieBusiness.AddMovieAndAuthors(movie, ganre, authors,actors);
+            
 
+        }
+        private void DeleteMovie()
+        {
+            Console.WriteLine("Enter id:");
+            int id = int.Parse(Console.ReadLine());
+            movieBusiness.DeletedMovie(id);
 
+        }
+        public void GetMovie()
+        {
+            Console.WriteLine(movieBusiness.GetMovies());
         }
 
     }
